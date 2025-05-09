@@ -1,0 +1,8 @@
+.filter-container {
+  margin: 20px;
+  font-family: "Poppins", sans-serif;
+}
+select {
+  padding: 8px;
+  border-radius: 6px;
+}
