@@ -1,24 +1,80 @@
+<!-- ფილტრის სექცია -->
+<div class="filter-section">
+  <!-- კატეგორიის ფილტრები -->
+  <div class="category-filters">
+    <label *ngFor="let category of categories" class="category-checkbox">
+      <input
+        type="checkbox"
+        [value]="category"
+        [checked]="selectedCategories.includes(category)"
+        (change)="onCategoryFilterChanged(category, $event)"
+      />
+      {{ category }}
+    </label>
+  </div>
+
+  <!-- ფასის დიაპაზონის ფილტრები -->
+  <div class="price-filters">
+    <label class="price-input">
+      მინიმალური ფასი:
+      <input
+        type="number"
+        [(ngModel)]="minPrice"
+        (input)="onPriceFilterChanged()"
+        min="0"
+      />
+    </label>
+    <label class="price-input">
+      მაქსიმალური ფასი:
+      <input
+        type="number"
+        [(ngModel)]="maxPrice"
+        (input)="onPriceFilterChanged()"
+        min="0"
+      />
+    </label>
+  </div>
+</div>
+
+<!-- შეტყობინებების სექცია -->
+<div class="messages">
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+</div>
+
+<!-- პროდუქტების სია -->
 <div class="product-list">
-  <!-- ჩვენება ყველა პროდუქტის, სანამ ფილტრი არ ამოქმედდება -->
-  <div *ngIf="filteredProducts.length > 0">
-    <div *ngFor="let product of filteredProducts">
+  <div *ngIf="filteredProducts.length > 0" class="products-grid">
+    <div *ngFor="let product of filteredProducts; trackBy: trackByProductId" class="product-card">
       <img
-        [src]="product.image"
-        alt="{{ product.name }}"
+        [src]="product.image || 'assets/placeholder.png'"
+        [alt]="product.name"
         class="product-image"
       />
       <div class="product-info">
         <h3 class="product-name">{{ product.name }}</h3>
-        <p class="product-price">{{ product.price }} ₾</p>
-        <button class="add-to-cart-btn" (click)="addToCart(product)">
-          კალათაში დამატება
-        </button>
+        <p class="product-description" *ngIf="product.description">{{ product.description }}</p>
+        <p class="product-price">{{ product.price | currency:'GEL':'symbol':'1.2-2' }} ₾</p>
+        <div class="product-actions">
+          <button
+            class="add-to-cart-btn"
+            [disabled]="isAddingMap[product.id]"
+            (click)="addToCart(product)"
+          >
+            <span *ngIf="!isAddingMap[product.id]">კალათაში დამატება</span>
+            <span *ngIf="isAddingMap[product.id]">იტვირთება...</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- როცა filteredProducts ცარიელია, საწყისი პროდუქტი გამოჩნდება -->
-  <div *ngIf="filteredProducts.length === 0">
-    <p>პროდუქტი არ არსებობს.</p>
+  <!-- დამატებულია მდგომარეობის ჩვენება -->
+  <div *ngIf="products.length === 0 && !errorMessage" class="loading-state">
+    <p>იტვირთება პროდუქტები...</p>
+  </div>
+
+  <div *ngIf="filteredProducts.length === 0 && products.length > 0 && !errorMessage" class="empty-state">
+    <p>არ მოიძებნა პროდუქტები მითითებული ფილტრებით.</p>
   </div>
 </div>

@@ -1,73 +1,29 @@
-.home-container {
-  text-align: center;
-  margin: 20px;
-}
-
-h2 {
-  font-size: 2rem;
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.product-list {
+.product-container {
   display: grid;
-  grid-template-columns: repeat(
-    auto-fill,
-    minmax(200px, 1fr)
-  ); /* Grid layout for responsiveness */
-  gap: 20px;
-  justify-items: center;
-  margin-top: 20px;
+  grid-template-columns: 1fr;
+  gap: 15px; /* Gap between cards reduced */
+  max-width: 1200px; /* Set a max-width for the container */
+  margin: 0 auto; /* Center align the container */
+  padding: 0 10px; /* Add some padding for better spacing */
 }
 
 .product-card {
-  background-color: #fff;
+  margin-bottom: 15px; /* Reduced margin between cards */
   border: 1px solid #ddd;
+  padding: 15px; /* Reduced padding for compact look */
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  max-width: 220px; /* Ensure that card size is controlled */
-  width: 100%; /* Make sure card adapts to the width */
-  height: 350px; /* Control height */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow effect */
+  background-color: #fff;
+  transition: transform 0.2s ease; /* Smooth effect on hover */
 }
 
 .product-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px); /* Small hover effect */
 }
 
-.product-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.product-name {
-  font-size: 1.2rem;
-  margin: 10px 0;
-  color: #333;
-}
-
-.product-price {
-  font-size: 1rem;
-  color: #888;
-  margin-bottom: 15px;
-}
-
-.add-to-cart-btn {
-  background-color: #28a745;
-  color: #fff;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 100%;
-}
-
-.add-to-cart-btn:hover {
-  background-color: #218838;
+/* Optional: Add responsive design for smaller screens */
+@media (max-width: 768px) {
+  .product-card {
+    padding: 12px; /* Adjust padding for smaller screens */
+  }
 }

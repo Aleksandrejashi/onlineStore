@@ -1,8 +1,53 @@
-<div class="filter-container">
-  <label>Filter by Category:</label>
-  <select [(ngModel)]="selectedCategory" (change)="filterChanged()">
-    <option *ngFor="let category of categories" [value]="category">
+<div class="filters-container">
+  <div class="filter-group">
+    <h3>კატეგორია</h3>
+    <label *ngFor="let category of categories">
+      <input
+        type="checkbox"
+        [(ngModel)]="selectedCategories[category]"
+        (change)="onFilterChanged()"
+        name="category-{{category}}"
+      />
       {{ category }}
-    </option>
-  </select>
+    </label>
+  </div>
+
+  <div class="filter-group">
+    <h3>ფასი</h3>
+    <div class="price-range">
+      <label>მინიმალური ფასი:</label>
+      <input
+        type="number"
+        [(ngModel)]="minPrice"
+        (input)="onPriceFilterChanged()"
+        class="price-input"
+        name="minPrice"
+      />
+    </div>
+    <div class="price-range">
+      <label>მაქსიმალური ფასი:</label>
+      <input
+        type="number"
+        [(ngModel)]="maxPrice"
+        (input)="onPriceFilterChanged()"
+        class="price-input"
+        name="maxPrice"
+      />
+    </div>
+  </div>
+</div>
+
+<div *ngIf="filteredProducts.length > 0">
+  <div *ngFor="let product of filteredProducts; trackBy: trackByProductId">
+    <div class="product-card">
+      <img [src]="product.image" alt="{{ product.name }}" />
+      <h4>{{ product.name }}</h4>
+      <p>{{ product.price }} ₾</p>
+      <button (click)="addToCart(product)">კალათაში დამატება</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="filteredProducts.length === 0">
+  <p>პროდუქტი არ მოიძებნა!</p>
 </div>

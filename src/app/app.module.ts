@@ -2,24 +2,21 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { HomeComponent } from './pages/home/home.component';
 import { ItemDetailComponent } from './pages/item-detail/item-detail.component';
-import { CartComponent } from './pages/cart/cart.component';
 import { CartService } from './services/cart.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+
+import { HomeComponent } from './pages/home/home.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { FilterComponent } from './filter/filter.component';
-import { CommonModule } from '@angular/common';
-// import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { CartComponent } from './pages/cart/cart.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ItemDetailComponent,
-    
-    
-
+    ItemDetailComponent,  // Regular component, stays in declarations
   ],
   imports: [
     BrowserModule,
@@ -28,13 +25,12 @@ import { CommonModule } from '@angular/common';
     ReactiveFormsModule,
     FormsModule,
     CommonModule,
-    HomeComponent,
-    CartComponent,
-    RegistrationComponent,
-    FilterComponent
+    HomeComponent,  
+    CartComponent,  
+    RegistrationComponent,  
+    FilterComponent  //
   ],
-  // schemas:[CUSTOM_ELEMENTS_SCHEMA],
-  providers: [CartService],  
+  providers: [CartService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
