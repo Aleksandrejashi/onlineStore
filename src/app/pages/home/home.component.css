@@ -1,29 +1,78 @@
+/* პროდუქტების კონტეინერი */
 .product-container {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 15px; /* Gap between cards reduced */
-  max-width: 1200px; /* Set a max-width for the container */
-  margin: 0 auto; /* Center align the container */
-  padding: 0 10px; /* Add some padding for better spacing */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* ბალანსირებული სვეტები */
+  gap: 15px; /* გაპი შორის */
+  max-width: 1200px;
+  margin: 0 auto; /* ყველა ელემენტი იყოს ცენტრში */
+  padding: 0 10px;
+  justify-items: center; /* ფოტოები და ელემენტები შუაში განლაგდება */
 }
 
+/* თითოეული პროდუქტის კარტი */
 .product-card {
-  margin-bottom: 15px; /* Reduced margin between cards */
+  margin-bottom: 15px;
   border: 1px solid #ddd;
-  padding: 15px; /* Reduced padding for compact look */
+  padding: 15px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow effect */
   background-color: #fff;
-  transition: transform 0.2s ease; /* Smooth effect on hover */
+  width: 100%; /* სვეტში გადაკეთებული კარტი */
 }
 
-.product-card:hover {
-  transform: translateY(-5px); /* Small hover effect */
+/* პროდუქტის გამოსახულება */
+.product-image {
+  width: 100%;
+  height: auto;
+  max-width: 250px; /* ფოტოს მაქსიმალური სიგანე */
+  margin-bottom: 15px;
 }
 
-/* Optional: Add responsive design for smaller screens */
+/* პროდუქტის სახელი */
+.product-name {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+/* პროდუქტის აღწერა */
+.product-description {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* პროდუქტის ფასი */
+.product-price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #e60000;
+}
+
+/* კალათაში დამატების ღილაკი */
+.add-to-cart-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #45a049;
+}
+
+/* ფრაგმენტის ზომები პატარა ეკრანებისთვის */
 @media (max-width: 768px) {
+  .product-container {
+    grid-template-columns: 1fr; /* ერთი სვეტი პატარა ეკრანებზე */
+  }
+
   .product-card {
-    padding: 12px; /* Adjust padding for smaller screens */
+    padding: 10px;
+  }
+
+  .product-image {
+    max-width: 200px; /* უფრო მცირე ფოტოები პატარა ეკრანებზე */
   }
 }

@@ -21,16 +21,13 @@ export class HomeComponent implements OnInit {
   minPrice: number = 0;
   maxPrice: number = 1000;
 
+  vegeterian: boolean = false;
+  nuts: boolean = false;
+
   isAddingMap: { [productId: number]: boolean } = {};
 
-  // Define URLs as constants
   private readonly apiUrl = 'https://restaurant.stepprojects.ge/api/Products/GetAll';
   private readonly postUrl = 'https://restaurant.stepprojects.ge/api/Baskets/AddToBasket';
-  
-  // Additional structured URLs
-  private readonly BASE_URL = 'https://restaurant.stepprojects.ge/api';
-  private readonly PRODUCTS_URL = `${this.BASE_URL}/Products`;
-  private readonly BASKETS_URL = `${this.BASE_URL}/Baskets`;
 
   constructor(private http: HttpClient) {}
 
@@ -38,27 +35,36 @@ export class HomeComponent implements OnInit {
     this.loadProducts();
   }
 
+  clearFilters(): void {
+    this.selectedCategories = [];
+    this.minPrice = 0;
+    this.maxPrice = 1000;
+    this.vegeterian = true;
+    this.nuts = false;
+    this.loadProducts();
+  }
+
   loadProducts(): void {
-    this.errorMessage = '';
-    const selectedCategories = this.selectedCategories.length
-      ? this.selectedCategories.join(',')
-      : '';
+    const categoriesParam = this.selectedCategories.join(',');
 
-    const params = new HttpParams()
-      .set('category', selectedCategories)
+    let params = new HttpParams()
       .set('minPrice', this.minPrice.toString())
-      .set('maxPrice', this.maxPrice.toString());
+      .set('maxPrice', this.maxPrice.toString())
+      .set('vegeterian', this.vegeterian.toString())
+      .set('nuts', this.nuts.toString());
 
-    // შევინარჩუნოთ ორიგინალი URL-ის გამოყენება
+    if (categoriesParam.length > 0) {
+      params = params.set('category', categoriesParam);
+    }
+
     this.http.get<any[]>('https://restaurant.stepprojects.ge/api/Products/GetFiltered', { params })
       .subscribe({
-        next: (data) => {
+        next: data => {
           this.products = data;
-          this.filterProducts();
+          this.filteredProducts = data;
         },
-        error: (error) => {
-          console.error('Error fetching filtered products:', error);
-          this.errorMessage = 'Failed to load products. Please try again later.';
+        error: error => {
+          console.error('პროდუქტების ჩატვირთვის შეცდომა:', error);
         }
       });
   }
@@ -68,8 +74,9 @@ export class HomeComponent implements OnInit {
   }
 
   addToCart(product: any): void {
+    console.log('CALLED: addToCart →', product);
     if (this.isAddingMap[product.id]) return;
-    
+
     this.isAddingMap[product.id] = true;
     this.successMessage = '';
     this.errorMessage = '';
@@ -82,11 +89,10 @@ export class HomeComponent implements OnInit {
 
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
 
-    // გამოვიყენოთ ორიგინალი postUrl
     this.http.post(this.postUrl, body, { headers }).subscribe({
       next: () => {
         this.successMessage = `${product.name} added to cart!`;
-        setTimeout(() => this.successMessage = '', 3000); // Clear message after 3 seconds
+        setTimeout(() => this.successMessage = '', 3000);
       },
       error: (error) => {
         console.error('Error adding product to cart:', error);
@@ -100,8 +106,7 @@ export class HomeComponent implements OnInit {
 
   removeFromCart(product: any): void {
     this.errorMessage = '';
-    
-    // შევინარჩუნოთ ორიგინალი URL-ის ფორმატი
+
     this.http.delete(`https://restaurant.stepprojects.ge/api/Baskets/DeleteProduct/${product.id}`).subscribe({
       next: () => {
         this.successMessage = `${product.name} removed from cart!`;
@@ -124,15 +129,15 @@ export class HomeComponent implements OnInit {
       this.selectedCategories = this.selectedCategories.filter(c => c !== category);
     }
 
-    this.loadProducts(); // Reload from server with new filters
+    this.loadProducts();
   }
 
   filterProducts(): void {
     this.filteredProducts = this.products.filter(product => {
       const priceInRange = product.price >= this.minPrice && product.price <= this.maxPrice;
-      const categoryMatch = this.selectedCategories.length === 0 || 
+      const categoryMatch = this.selectedCategories.length === 0 ||
                             this.selectedCategories.includes(product.category);
-      
+
       return priceInRange && categoryMatch;
     });
   }

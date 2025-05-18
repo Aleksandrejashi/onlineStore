@@ -17,6 +17,7 @@ import { CartComponent } from './pages/cart/cart.component';
   declarations: [
     AppComponent,
     ItemDetailComponent,  // Regular component, stays in declarations
+    
   ],
   imports: [
     BrowserModule,

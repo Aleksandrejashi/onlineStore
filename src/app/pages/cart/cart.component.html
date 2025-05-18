@@ -1,7 +1,7 @@
 <div *ngIf="cartItems.length === 0">კალათა ცარიელია</div>
 
 <div *ngFor="let item of cartItems; let i = index" class="cart-item">
-  <img [src]="item.image || 'assets/placeholder.png'" alt="{{ item.name }}" class="cart-item-image" />
+  <img [src]="item.product.image" alt="{{ item.name }}" class="cart-item-image" />
   <div class="cart-item-details">
     <p class="cart-item-name">{{ item.name }}</p>
     <p class="cart-item-price">{{ item.price }} ₾</p>

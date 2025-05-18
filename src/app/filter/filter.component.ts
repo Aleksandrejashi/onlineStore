@@ -13,66 +13,54 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 export class FilterComponent {
   @Output() onFilter = new EventEmitter<any>();
 
-  categories: string[] = ['Salads', 'Soups', 'Chicken-Dishes', 'Beef-Dishes'];
+  categories: string[] = ['Salads', 'Soups', 'Chicken-Dishes'];
+
   selectedCategories: { [key: string]: boolean } = {
-    'Salads': false,
-    'Soups': false,
-    'Chicken-Dishes': false,
-    'Beef-Dishes': false
+    'Salads': true,
+    'Soups': true,
+    'Chicken-Dishes': true,
   };
+
   minPrice: number = 0;
   maxPrice: number = 1000;
 
-  products: any[] = []; // მიიღებს სრულ პროდუქტების სიას მშობლისგან ან API-დან
+  vegeterian: boolean = false;
+  nuts: boolean = false;
+
+  products: any[] = [];
   filteredProducts: any[] = [];
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit() {
-    this.loadProducts(); // Load products from API
-  }
-
   loadProducts() {
     const activeCategories = Object.keys(this.selectedCategories).filter(cat => this.selectedCategories[cat]);
-    console.log('აქტიური კატეგორიები:', activeCategories); // Debug log
+    const categoriesParam = activeCategories.join(',');
 
     let params = new HttpParams()
       .set('minPrice', this.minPrice.toString())
-      .set('maxPrice', this.maxPrice.toString());
+      .set('maxPrice', this.maxPrice.toString())
+      .set('vegeterian', this.vegeterian.toString())
+      .set('nuts', this.nuts.toString());
 
-    activeCategories.forEach(category => {
-      params = params.append('category', category);
-    });
+    if (categoriesParam.length > 0) {
+      params = params.set('category', categoriesParam);
+    }
 
     this.http.get<any[]>('https://restaurant.stepprojects.ge/api/Products/GetFiltered', { params })
-      .subscribe(
-        (data: any[]) => {
-          console.log('მიღებული პროდუქტები:', data);
+      .subscribe({
+        next: data => {
           this.products = data;
           this.filteredProducts = data;
+          this.onFilter.emit(this.filteredProducts);
         },
-        (error) => {
+        error: error => {
           console.error('პროდუქტების ჩატვირთვის შეცდომა:', error);
         }
-      );
+      });
   }
 
-  onFilterChanged() {
-    // Trigger loadProducts with latest category and price filters
-    this.loadProducts();
-  }
-
-  onPriceFilterChanged() {
-    // Trigger loadProducts with latest price and category filters
-    this.loadProducts();
-  }
-
-  trackByProductId(index: number, item: any): any {
-    return item.id;
-  }
-
-  addToCart(product: any) {
-    // კალათაში დამატების ლოგიკა (გააკეთე API call ან გადაცემის ფუნქცია)
-    console.log('დაემატა კალათაში:', product);
+ 
+  trackByProductId(index: number, product: any): any {
+    return product.id || index;
   }
 }

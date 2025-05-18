@@ -1,4 +1,4 @@
-<!-- ფილტრის სექცია -->
+ფილტრის სექცია
 <div class="filter-section">
   <!-- კატეგორიის ფილტრები -->
   <div class="category-filters">
@@ -34,6 +34,11 @@
       />
     </label>
   </div>
+
+  <!-- ფილტრების გასაწმენდი ღილაკი -->
+  <div class="clear-filters">
+    <button (click)="clearFilters()">ფილტრების გასუფთავება</button>
+  </div>
 </div>
 
 <!-- შეტყობინებების სექცია -->
@@ -44,17 +49,26 @@
 
 <!-- პროდუქტების სია -->
 <div class="product-list">
+  <!-- პროდუქტები ნაპოვნია -->
   <div *ngIf="filteredProducts.length > 0" class="products-grid">
-    <div *ngFor="let product of filteredProducts; trackBy: trackByProductId" class="product-card">
+    <div
+      *ngFor="let product of filteredProducts; trackBy: trackByProductId"
+      class="product-card"
+    >
+      <!-- პროდუქტის ფოტოს გარეშე ლინკი -->
       <img
         [src]="product.image || 'assets/placeholder.png'"
-        [alt]="product.name"
+        [alt]="product.name || 'პროდუქტის ფოტო'"
         class="product-image"
       />
       <div class="product-info">
         <h3 class="product-name">{{ product.name }}</h3>
-        <p class="product-description" *ngIf="product.description">{{ product.description }}</p>
-        <p class="product-price">{{ product.price | currency:'GEL':'symbol':'1.2-2' }} ₾</p>
+        <p class="product-description" *ngIf="product.description">
+          {{ product.description }}
+        </p>
+        <p class="product-price">
+          {{ product.price | currency: 'GEL':'symbol':'1.2-2' }} ₾
+        </p>
         <div class="product-actions">
           <button
             class="add-to-cart-btn"
@@ -64,17 +78,29 @@
             <span *ngIf="!isAddingMap[product.id]">კალათაში დამატება</span>
             <span *ngIf="isAddingMap[product.id]">იტვირთება...</span>
           </button>
+          <!-- წაშლის ღილაკი კალათაში დამატებული პროდუქტისათვის -->
+          <button
+            class="remove-from-cart-btn"
+            (click)="removeFromCart(product)"
+            *ngIf="product.inCart"
+          >
+            კალათიდან ამოღება
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- დამატებულია მდგომარეობის ჩვენება -->
+  <!-- იტვირთება პროდუქტები -->
   <div *ngIf="products.length === 0 && !errorMessage" class="loading-state">
     <p>იტვირთება პროდუქტები...</p>
   </div>
 
-  <div *ngIf="filteredProducts.length === 0 && products.length > 0 && !errorMessage" class="empty-state">
+  <!-- არ მოიძებნა -->
+  <div
+    *ngIf="filteredProducts.length === 0 && products.length > 0 && !errorMessage"
+    class="empty-state"
+  >
     <p>არ მოიძებნა პროდუქტები მითითებული ფილტრებით.</p>
   </div>
 </div>

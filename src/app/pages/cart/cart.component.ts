@@ -27,7 +27,7 @@ export class CartComponent implements OnInit {
       (data) => {
         this.cartItems = data.map(item => ({
           ...item,
-          image: item.image || 'assets/placeholder.png'  // Ensure image exists for each cart item
+          image: item.image 
         }));
         console.log('Loaded cart items from API:', this.cartItems);
       },
@@ -42,7 +42,7 @@ export class CartComponent implements OnInit {
     const item = {
       name: product.name,
       price: product.price,
-      image: product.image || 'assets/placeholder.png',  // Ensure product image is added
+      image: product.image,
       quantity: 1
     };
 
@@ -54,7 +54,7 @@ export class CartComponent implements OnInit {
   }
 
   removeItem(index: number) {
-    this.cartItems.splice(index, 1);  // Local removal
+    this.cartItems.splice(index, 1);  
     this.successMessage = 'Item removed from cart!';
 
     // Save updated cart to localStorage
