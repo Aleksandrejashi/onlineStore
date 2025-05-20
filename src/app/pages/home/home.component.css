@@ -1,78 +1,81 @@
-/* პროდუქტების კონტეინერი */
-.product-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* ბალანსირებული სვეტები */
-  gap: 15px; /* გაპი შორის */
-  max-width: 1200px;
-  margin: 0 auto; /* ყველა ელემენტი იყოს ცენტრში */
-  padding: 0 10px;
-  justify-items: center; /* ფოტოები და ელემენტები შუაში განლაგდება */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
 }
 
-/* თითოეული პროდუქტის კარტი */
-.product-card {
-  margin-bottom: 15px;
-  border: 1px solid #ddd;
+.filter-panel {
+  background: #f4f4f4;
   padding: 15px;
-  border-radius: 8px;
-  background-color: #fff;
-  width: 100%; /* სვეტში გადაკეთებული კარტი */
+  border-radius: 10px;
 }
 
-/* პროდუქტის გამოსახულება */
+.product-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 15px;
+  text-align: center;
+}
+
 .product-image {
   width: 100%;
-  height: auto;
-  max-width: 250px; /* ფოტოს მაქსიმალური სიგანე */
-  margin-bottom: 15px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
-/* პროდუქტის სახელი */
 .product-name {
-  font-size: 1.1rem;
-  font-weight: bold;
-  margin: 10px 0;
-}
-
-/* პროდუქტის აღწერა */
-.product-description {
-  font-size: 0.9rem;
-  color: #555;
-  margin-bottom: 10px;
-}
-
-/* პროდუქტის ფასი */
-.product-price {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #e60000;
 }
 
-/* კალათაში დამატების ღილაკი */
-.add-to-cart-btn {
-  background-color: #4CAF50;
+.product-price {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.add-btn {
+  background-color: #007bff;
   color: white;
-  padding: 10px 20px;
+  padding: 8px 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  margin-top: 10px;
 }
 
-.add-to-cart-btn:hover {
-  background-color: #45a049;
+.add-btn:disabled {
+  background-color: #999;
+  cursor: not-allowed;
 }
 
-/* ფრაგმენტის ზომები პატარა ეკრანებისთვის */
-@media (max-width: 768px) {
-  .product-container {
-    grid-template-columns: 1fr; /* ერთი სვეტი პატარა ეკრანებზე */
-  }
+.alert {
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  text-align: center;
+}
 
-  .product-card {
-    padding: 10px;
-  }
+.success-alert {
+  background-color: #d4edda;
+  color: #155724;
+}
 
-  .product-image {
-    max-width: 200px; /* უფრო მცირე ფოტოები პატარა ეკრანებზე */
-  }
+.error-alert {
+  background-color: #f8d7da;
+  color: #721c24;
 }

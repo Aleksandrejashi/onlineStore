@@ -1,19 +1,21 @@
 <div class="filters-container">
-  <!-- კატეგორიების ფილტრი -->
   <div class="filter-group">
     <h3>კატეგორია</h3>
-    <label *ngFor="let category of categories">
-      <input
-        type="checkbox"
-        [(ngModel)]="selectedCategories[category]"
-        (change)="loadProducts()"
-        name="category-{{ category }}"
-      />
-      {{ category }}
-    </label>
+    <div *ngIf="Object.keys(selectedCategories).length > 0; else loading">
+      <label *ngFor="let category of Object.keys(selectedCategories)">
+        <input
+          type="checkbox"
+          [(ngModel)]="selectedCategories[category]"
+          (change)="loadProducts()"
+        />
+        {{ category }}
+      </label>
+    </div>
+    <ng-template #loading>
+      <p>კატეგორიების ჩატვირთვა...</p>
+    </ng-template>
   </div>
 
-  <!-- ფასი -->
   <div class="filter-group">
     <h3>ფასი</h3>
     <div class="price-range">
@@ -23,7 +25,6 @@
         [(ngModel)]="minPrice"
         (input)="loadProducts()"
         class="price-input"
-        name="minPrice"
         min="0"
       />
     </div>
@@ -34,46 +35,21 @@
         [(ngModel)]="maxPrice"
         (input)="loadProducts()"
         class="price-input"
-        name="maxPrice"
         min="0"
       />
     </div>
   </div>
 
-  <!-- ინგრედიენტების ფილტრი -->
   <div class="filter-group">
-    <h3>ინგრედიენტები</h3>
+    <h3>დამატებითი ფილტრები</h3>
     <label>
-      <input
-        type="checkbox"
-        [(ngModel)]="vegeterian"
-        (change)="loadProducts()"
-        name="vegeterian"
-      />
-      ვეგეტარიანული
+      <input type="checkbox" [(ngModel)]="vegeterian" (change)="loadProducts()" />
+      ვეგეტერიანული
     </label>
     <label>
-      <input
-        type="checkbox"
-        [(ngModel)]="nuts"
-        (change)="loadProducts()"
-        name="nuts"
-      />
-      შეიცავს ნიგოზს
+      <input type="checkbox" [(ngModel)]="nuts" (change)="loadProducts()" />
+      ნიგოზი
     </label>
   </div>
-</div>
 
-<!-- ფილტრაციის შედეგები -->
-<div *ngIf="filteredProducts.length > 0" class="products-container">
-  <div *ngFor="let product of filteredProducts; trackBy: trackByProductId" class="product-card">
-    <img [src]="product.image" [alt]="product.name" class="product-image" />
-    <h4>{{ product.name }}</h4>
-    <p>{{ product.price }} ₾</p>
-  </div>
-</div>
-
-<!-- როდესაც პროდუქტი არ მოიძებნება -->
-<div *ngIf="filteredProducts.length === 0">
-  <p>პროდუქტი არ მოიძებნა!</p>
-</div>
+ 

@@ -1,106 +1,49 @@
-ფილტრის სექცია
-<div class="filter-section">
-  <!-- კატეგორიის ფილტრები -->
-  <div class="category-filters">
-    <label *ngFor="let category of categories" class="category-checkbox">
-      <input
-        type="checkbox"
-        [value]="category"
-        [checked]="selectedCategories.includes(category)"
-        (change)="onCategoryFilterChanged(category, $event)"
-      />
-      {{ category }}
-    </label>
-  </div>
+<div class="home-container">
 
-  <!-- ფასის დიაპაზონის ფილტრები -->
-  <div class="price-filters">
-    <label class="price-input">
-      მინიმალური ფასი:
-      <input
-        type="number"
-        [(ngModel)]="minPrice"
-        (input)="onPriceFilterChanged()"
-        min="0"
-      />
-    </label>
-    <label class="price-input">
-      მაქსიმალური ფასი:
-      <input
-        type="number"
-        [(ngModel)]="maxPrice"
-        (input)="onPriceFilterChanged()"
-        min="0"
-      />
-    </label>
-  </div>
+  <!-- ფილტრი -->
+  <section class="filter-panel">
+    <app-filter (filterChange)="onFilterChanged($event)"></app-filter>
+  </section>
 
-  <!-- ფილტრების გასაწმენდი ღილაკი -->
-  <div class="clear-filters">
-    <button (click)="clearFilters()">ფილტრების გასუფთავება</button>
-  </div>
-</div>
+  <!-- პროდუქტის სექცია -->
+  <section class="product-section">
 
-<!-- შეტყობინებების სექცია -->
-<div class="messages">
-  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
-  <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-</div>
+    <!-- არ მოიძებნა -->
+    <div *ngIf="filteredProducts.length === 0" class="no-products">
+      <p>პროდუქტი არ მოიძებნა!</p>
+    </div>
 
-<!-- პროდუქტების სია -->
-<div class="product-list">
-  <!-- პროდუქტები ნაპოვნია -->
-  <div *ngIf="filteredProducts.length > 0" class="products-grid">
-    <div
-      *ngFor="let product of filteredProducts; trackBy: trackByProductId"
-      class="product-card"
-    >
-      <!-- პროდუქტის ფოტოს გარეშე ლინკი -->
-      <img
-        [src]="product.image || 'assets/placeholder.png'"
-        [alt]="product.name || 'პროდუქტის ფოტო'"
-        class="product-image"
-      />
-      <div class="product-info">
-        <h3 class="product-name">{{ product.name }}</h3>
-        <p class="product-description" *ngIf="product.description">
-          {{ product.description }}
-        </p>
-        <p class="product-price">
-          {{ product.price | currency: 'GEL':'symbol':'1.2-2' }} ₾
-        </p>
-        <div class="product-actions">
+    <!-- ნაპოვნი პროდუქტების ბარათები -->
+    <div *ngIf="filteredProducts.length > 0" class="product-grid">
+      <div
+        class="product-card"
+        *ngFor="let product of filteredProducts; trackBy: trackByProductId"
+      >
+        <img
+          [src]="product.image || 'assets/placeholder.png'"
+          [alt]="product.name"
+          class="product-image"
+        />
+
+        <div class="product-details">
+          <h3 class="product-name">{{ product.name }}</h3>
+          <p class="product-price">
+            {{ product.price | currency: 'GEL':'symbol' }}
+          </p>
+          <p class="product-description" *ngIf="product.description">
+            {{ product.description }}
+          </p>
+
           <button
-            class="add-to-cart-btn"
-            [disabled]="isAddingMap[product.id]"
+            class="add-btn"
             (click)="addToCart(product)"
+            [disabled]="isAddingMap[product.id]"
           >
-            <span *ngIf="!isAddingMap[product.id]">კალათაში დამატება</span>
-            <span *ngIf="isAddingMap[product.id]">იტვირთება...</span>
-          </button>
-          <!-- წაშლის ღილაკი კალათაში დამატებული პროდუქტისათვის -->
-          <button
-            class="remove-from-cart-btn"
-            (click)="removeFromCart(product)"
-            *ngIf="product.inCart"
-          >
-            კალათიდან ამოღება
+            {{ isAddingMap[product.id] ? 'იტვირთება...' : 'კალათაში დამატება' }}
           </button>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- იტვირთება პროდუქტები -->
-  <div *ngIf="products.length === 0 && !errorMessage" class="loading-state">
-    <p>იტვირთება პროდუქტები...</p>
-  </div>
-
-  <!-- არ მოიძებნა -->
-  <div
-    *ngIf="filteredProducts.length === 0 && products.length > 0 && !errorMessage"
-    class="empty-state"
-  >
-    <p>არ მოიძებნა პროდუქტები მითითებული ფილტრებით.</p>
-  </div>
+  </section>
 </div>

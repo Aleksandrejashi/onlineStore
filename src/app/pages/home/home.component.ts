@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { FilterComponent } from '../../filter/filter.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FilterComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -15,14 +16,12 @@ export class HomeComponent implements OnInit {
   filteredProducts: any[] = [];
   categories = ['Salads', 'Soups', 'Chicken-Dishes'];
   selectedCategories: string[] = [];
+
   successMessage = '';
   errorMessage = '';
 
   minPrice: number = 0;
   maxPrice: number = 1000;
-
-  vegeterian: boolean = false;
-  nuts: boolean = false;
 
   isAddingMap: { [productId: number]: boolean } = {};
 
@@ -39,22 +38,21 @@ export class HomeComponent implements OnInit {
     this.selectedCategories = [];
     this.minPrice = 0;
     this.maxPrice = 1000;
-    this.vegeterian = true;
-    this.nuts = false;
     this.loadProducts();
   }
 
   loadProducts(): void {
-    const categoriesParam = this.selectedCategories.join(',');
+    // აქ უნდა ფიქსირდებოდეს მრავალჯერადი category პარამეტრის გადაცემა
+    // API-ს მიხედვით თუ multiple categories მიიღება, მაშინ საჭიროა append-ით გადასვლა
 
     let params = new HttpParams()
       .set('minPrice', this.minPrice.toString())
-      .set('maxPrice', this.maxPrice.toString())
-      .set('vegeterian', this.vegeterian.toString())
-      .set('nuts', this.nuts.toString());
+      .set('maxPrice', this.maxPrice.toString());
 
-    if (categoriesParam.length > 0) {
-      params = params.set('category', categoriesParam);
+    if (this.selectedCategories.length > 0) {
+      this.selectedCategories.forEach(category => {
+        params = params.append('category', category);
+      });
     }
 
     this.http.get<any[]>('https://restaurant.stepprojects.ge/api/Products/GetFiltered', { params })
@@ -65,16 +63,19 @@ export class HomeComponent implements OnInit {
         },
         error: error => {
           console.error('პროდუქტების ჩატვირთვის შეცდომა:', error);
+          this.errorMessage = 'პროდუქტების ჩატვირთვა ვერ მოხერხდა.';
         }
       });
   }
 
-  onPriceFilterChanged(): void {
-    this.filterProducts();
+  onFilterChanged(event: { categories: string[], minPrice: number, maxPrice: number }): void {
+    this.selectedCategories = event.categories;
+    this.minPrice = event.minPrice;
+    this.maxPrice = event.maxPrice;
+    this.loadProducts();
   }
 
   addToCart(product: any): void {
-    console.log('CALLED: addToCart →', product);
     if (this.isAddingMap[product.id]) return;
 
     this.isAddingMap[product.id] = true;
@@ -91,12 +92,12 @@ export class HomeComponent implements OnInit {
 
     this.http.post(this.postUrl, body, { headers }).subscribe({
       next: () => {
-        this.successMessage = `${product.name} added to cart!`;
+        this.successMessage = `${product.name} კალათაში დაემატა!`;
         setTimeout(() => this.successMessage = '', 3000);
       },
       error: (error) => {
-        console.error('Error adding product to cart:', error);
-        this.errorMessage = 'Failed to add product to cart. Please try again.';
+        console.error('პროდუქტის დამატების შეცდომა:', error);
+        this.errorMessage = 'პროდუქტის დამატება ვერ მოხერხდა. სცადეთ თავიდან.';
       },
       complete: () => {
         this.isAddingMap[product.id] = false;
@@ -109,36 +110,13 @@ export class HomeComponent implements OnInit {
 
     this.http.delete(`https://restaurant.stepprojects.ge/api/Baskets/DeleteProduct/${product.id}`).subscribe({
       next: () => {
-        this.successMessage = `${product.name} removed from cart!`;
+        this.successMessage = `${product.name} კალათიდან ამოიღეს!`;
         setTimeout(() => this.successMessage = '', 3000);
       },
       error: (error) => {
-        console.error('Error removing product from cart:', error);
-        this.errorMessage = 'Failed to remove product from cart.';
+        console.error('პროდუქტის წაშლის შეცდომა:', error);
+        this.errorMessage = 'პროდუქტის წაშლა ვერ მოხერხდა.';
       }
-    });
-  }
-
-  onCategoryFilterChanged(category: string, event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const isChecked = input.checked;
-
-    if (isChecked) {
-      this.selectedCategories.push(category);
-    } else {
-      this.selectedCategories = this.selectedCategories.filter(c => c !== category);
-    }
-
-    this.loadProducts();
-  }
-
-  filterProducts(): void {
-    this.filteredProducts = this.products.filter(product => {
-      const priceInRange = product.price >= this.minPrice && product.price <= this.maxPrice;
-      const categoryMatch = this.selectedCategories.length === 0 ||
-                            this.selectedCategories.includes(product.category);
-
-      return priceInRange && categoryMatch;
     });
   }
 
