@@ -51,4 +51,18 @@
       ნიგოზი
     </label>
   </div>
+
+  <div class="filter-group">
+    <h3>სიცხარე</h3>
+    <label for="spiciness">სიცხარე (0-5): {{ spiciness }}</label>
+    <input
+      type="range"
+      id="spiciness"
+      min="0"
+      max="5"
+      [(ngModel)]="spiciness"
+      (change)="loadProducts()"
+      style="width: 100%;"
+    />
+  </div>
 </div>

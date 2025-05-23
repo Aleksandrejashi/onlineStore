@@ -13,7 +13,14 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 export class FilterComponent implements OnInit {
   Object = Object;
 
-  @Output() filterChange = new EventEmitter<{ categories: string[], minPrice: number, maxPrice: number, vegeterian: boolean, nuts: boolean }>();
+  @Output() filterChange = new EventEmitter<{
+    categories: string[],
+    minPrice: number,
+    maxPrice: number,
+    vegeterian: boolean,
+    nuts: boolean,
+    spiciness: number
+  }>();
 
   selectedCategories: { [key: string]: boolean } = {
     'Salads': true,
@@ -28,11 +35,12 @@ export class FilterComponent implements OnInit {
 
   vegeterian: boolean = false;
   nuts: boolean = false;
+  spiciness: number = 0; // 0 - არა ცხარე, 5 - ძალიან ცხარე
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.fetchCategories(); // ახალი ფუნქციის გამოძახება
+    this.fetchCategories();
   }
 
   fetchCategories() {
@@ -42,7 +50,7 @@ export class FilterComponent implements OnInit {
       next: (data) => {
         console.log('მიღებული მონაცემები:', data);
 
-        // თუ API ნამდვილად აბრუნებს categories, ეს ნაწილი შეგიძლია დაარეგულირო
+        // თუ categories მოდის API-დან, გამოიყენე ეს ნაწილი
         if (data.categories && Array.isArray(data.categories)) {
           this.selectedCategories = {};
           data.categories.forEach((cat: string) => {
@@ -66,7 +74,8 @@ export class FilterComponent implements OnInit {
       minPrice: this.minPrice,
       maxPrice: this.maxPrice,
       vegeterian: this.vegeterian,
-      nuts: this.nuts
+      nuts: this.nuts,
+      spiciness: this.spiciness
     });
   }
 }
