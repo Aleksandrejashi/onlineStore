@@ -107,3 +107,68 @@
 .cart-summary .checkout-button:hover {
   background-color: #218838;
 }
+
+/* Responsive adjustments */
+
+@media (max-width: 768px) {
+  .cart-items {
+    grid-template-columns: 1fr; /* ერთი სვეტი საშუალო ზომის ეკრანზე */
+  }
+
+  .cart-item {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cart-item img {
+    width: 150px;
+    margin-bottom: 10px;
+  }
+
+  .cart-item-actions {
+    width: 100%;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+  }
+
+  .cart-summary {
+    text-align: center;
+  }
+
+  .cart-summary .checkout-button {
+    width: 100%;
+    padding: 15px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .cart-header h1 {
+    font-size: 2rem;
+  }
+
+  .cart-item-name {
+    font-size: 1.1rem;
+  }
+
+  .cart-item-price {
+    font-size: 1rem;
+  }
+
+  .cart-item img {
+    width: 120px;
+  }
+
+  .cart-item-actions button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+
+  .cart-summary h2 {
+    font-size: 1.3rem;
+  }
+
+  .cart-summary .total {
+    font-size: 1.1rem;
+  }
+}

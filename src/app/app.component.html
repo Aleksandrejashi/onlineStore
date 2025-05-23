@@ -1,8 +1,9 @@
 <h1>ინტერნეტ კაფე</h1>
 <nav>
-  <a routerLink="/">მთავარი გვერდი</a> |
-  <a routerLink="/cart">კალათა</a>
+  <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">მთავარი გვერდი</a> |
+  <a routerLink="/cart" routerLinkActive="active">კალათა</a>
 </nav>
+
 <hr />
 <router-outlet></router-outlet>
 

@@ -9,3 +9,9 @@
     <button (click)="removeItem(i)" class="remove-item-btn">წაშლა</button>
   </div>
 </div>
+
+<!-- ჯამური ფასი -->
+<div class="cart-summary" *ngIf="cartItems.length > 0">
+  <h2>ჯამი: {{ getTotalPrice() | number:'1.2-2' }} ₾</h2>
+  <button class="checkout-button">გადახდა</button>
+</div>

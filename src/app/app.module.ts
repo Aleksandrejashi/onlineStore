@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ItemDetailComponent } from './pages/item-detail/item-detail.component';
 import { CartService } from './services/cart.service';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -16,8 +15,7 @@ import { CartComponent } from './pages/cart/cart.component';
 @NgModule({
   declarations: [
     AppComponent,
-    ItemDetailComponent,  // Regular component, stays in declarations
-    
+    // სხვა კომპონენტები standalone-ია, ამიტომ აქ არ წერენ
   ],
   imports: [
     BrowserModule,
@@ -26,10 +24,10 @@ import { CartComponent } from './pages/cart/cart.component';
     ReactiveFormsModule,
     FormsModule,
     CommonModule,
-    HomeComponent,  
-    CartComponent,  
-    RegistrationComponent,  
-    FilterComponent  //
+    HomeComponent,
+    CartComponent,
+    RegistrationComponent,
+    FilterComponent
   ],
   providers: [CartService],
   bootstrap: [AppComponent]
