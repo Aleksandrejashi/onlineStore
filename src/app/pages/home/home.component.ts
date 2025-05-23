@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
 
   isAddingMap: { [productId: number]: boolean } = {};
 
-  private readonly apiUrl = 'https://restaurant.stepprojects.ge/api/Products/GetAll';
+  private readonly apiUrl = 'https://restaurant.stepprojects.ge/api/Products/GetFiltered';
   private readonly postUrl = 'https://restaurant.stepprojects.ge/api/Baskets/AddToBasket';
 
   constructor(private http: HttpClient) {}
@@ -42,12 +42,7 @@ export class HomeComponent implements OnInit {
   }
 
   loadProducts(): void {
-    // აქ უნდა ფიქსირდებოდეს მრავალჯერადი category პარამეტრის გადაცემა
-    // API-ს მიხედვით თუ multiple categories მიიღება, მაშინ საჭიროა append-ით გადასვლა
-
-    let params = new HttpParams()
-      .set('minPrice', this.minPrice.toString())
-      .set('maxPrice', this.maxPrice.toString());
+    let params = new HttpParams();
 
     if (this.selectedCategories.length > 0) {
       this.selectedCategories.forEach(category => {
@@ -55,17 +50,20 @@ export class HomeComponent implements OnInit {
       });
     }
 
-    this.http.get<any[]>('https://restaurant.stepprojects.ge/api/Products/GetFiltered', { params })
-      .subscribe({
-        next: data => {
-          this.products = data;
-          this.filteredProducts = data;
-        },
-        error: error => {
-          console.error('პროდუქტების ჩატვირთვის შეცდომა:', error);
-          this.errorMessage = 'პროდუქტების ჩატვირთვა ვერ მოხერხდა.';
-        }
-      });
+    this.http.get<any[]>(this.apiUrl, { params }).subscribe({
+      next: data => {
+        this.products = data;
+
+        // ფასის ფილტრი შესრულდება კლიენტის მხარეს
+        this.filteredProducts = data.filter(product =>
+          product.price >= this.minPrice && product.price <= this.maxPrice
+        );
+      },
+      error: error => {
+        console.error('პროდუქტების ჩატვირთვის შეცდომა:', error);
+        this.errorMessage = 'პროდუქტების ჩატვირთვა ვერ მოხერხდა.';
+      }
+    });
   }
 
   onFilterChanged(event: { categories: string[], minPrice: number, maxPrice: number }): void {
