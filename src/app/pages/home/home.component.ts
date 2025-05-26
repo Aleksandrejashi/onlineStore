@@ -14,49 +14,85 @@ import { FilterComponent } from '../../filter/filter.component';
 export class HomeComponent implements OnInit {
   products: any[] = [];
   filteredProducts: any[] = [];
-  categories = ['Salads', 'Soups', 'Chicken-Dishes'];
-  selectedCategories: string[] = [];
 
   successMessage = '';
   errorMessage = '';
 
   minPrice: number = 0;
   maxPrice: number = 1000;
+  selectedCategoryIds: (number | null)[] = [];
 
   isAddingMap: { [productId: number]: boolean } = {};
 
   private readonly apiUrl = 'https://restaurant.stepprojects.ge/api/Products/GetFiltered';
   private readonly postUrl = 'https://restaurant.stepprojects.ge/api/Baskets/AddToBasket';
+  private readonly deleteUrl = 'https://restaurant.stepprojects.ge/api/Baskets/DeleteProduct';
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.loadProducts();
+    this.loadProductsWithAdditionalFilters({
+      categoryIds: [],
+      minPrice: this.minPrice,
+      maxPrice: this.maxPrice,
+      vegeterian: false,
+      nuts: false,
+      spiciness: 0
+    });
   }
 
-  clearFilters(): void {
-    this.selectedCategories = [];
-    this.minPrice = 0;
-    this.maxPrice = 1000;
-    this.loadProducts();
+  onFilterChanged(event: {
+    categoryIds: (number | null)[],
+    minPrice: number,
+    maxPrice: number,
+    vegeterian: boolean,
+    nuts: boolean,
+    spiciness: number
+  }): void {
+    this.minPrice = event.minPrice;
+    this.maxPrice = event.maxPrice;
+    this.selectedCategoryIds = event.categoryIds;
+
+    this.loadProductsWithAdditionalFilters(event);
   }
 
-  loadProducts(): void {
+  loadProductsWithAdditionalFilters(filters: {
+    categoryIds: (number | null)[],
+    minPrice: number,
+    maxPrice: number,
+    vegeterian: boolean,
+    nuts: boolean,
+    spiciness: number
+  }): void {
     let params = new HttpParams();
 
-    if (this.selectedCategories.length > 0) {
-      this.selectedCategories.forEach(category => {
-        params = params.append('category', category);
+    if (filters.categoryIds.length > 0 && !filters.categoryIds.includes(null)) {
+      filters.categoryIds.forEach(id => {
+        if (id !== null) {
+          params = params.append('categoryId', id.toString());
+        }
       });
+    }
+
+    if (filters.vegeterian) {
+      params = params.set('isVegetarian', 'true');
+    }
+
+    if (filters.nuts) {
+      params = params.set('containsNuts', 'true');
+    }
+
+    if (filters.spiciness > 0) {
+      params = params.set('spicyLevel', filters.spiciness.toString());
     }
 
     this.http.get<any[]>(this.apiUrl, { params }).subscribe({
       next: data => {
         this.products = data;
 
-        // ფასის ფილტრი შესრულდება კლიენტის მხარეს
+        // ფასის ფილტრი კლიენტის მხარეს
         this.filteredProducts = data.filter(product =>
-          product.price >= this.minPrice && product.price <= this.maxPrice
+          product.price >= filters.minPrice && product.price <= filters.maxPrice
         );
       },
       error: error => {
@@ -64,13 +100,6 @@ export class HomeComponent implements OnInit {
         this.errorMessage = 'პროდუქტების ჩატვირთვა ვერ მოხერხდა.';
       }
     });
-  }
-
-  onFilterChanged(event: { categories: string[], minPrice: number, maxPrice: number }): void {
-    this.selectedCategories = event.categories;
-    this.minPrice = event.minPrice;
-    this.maxPrice = event.maxPrice;
-    this.loadProducts();
   }
 
   addToCart(product: any): void {
@@ -95,7 +124,7 @@ export class HomeComponent implements OnInit {
       },
       error: (error) => {
         console.error('პროდუქტის დამატების შეცდომა:', error);
-        this.errorMessage = 'პროდუქტის დამატება ვერ მოხერხდა. სცადეთ თავიდან.';
+        this.errorMessage = 'პროდუქტის დამატება ვერ მოხერხდა.';
       },
       complete: () => {
         this.isAddingMap[product.id] = false;
@@ -106,7 +135,7 @@ export class HomeComponent implements OnInit {
   removeFromCart(product: any): void {
     this.errorMessage = '';
 
-    this.http.delete(`https://restaurant.stepprojects.ge/api/Baskets/DeleteProduct/${product.id}`).subscribe({
+    this.http.delete(`${this.deleteUrl}/${product.id}`).subscribe({
       next: () => {
         this.successMessage = `${product.name} კალათიდან ამოიღეს!`;
         setTimeout(() => this.successMessage = '', 3000);

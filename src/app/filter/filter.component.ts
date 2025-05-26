@@ -1,20 +1,19 @@
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-filter',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './filter.component.html',
   styleUrls: ['./filter.component.css']
 })
-export class FilterComponent implements OnInit {
+export class FilterComponent {
   Object = Object;
 
   @Output() filterChange = new EventEmitter<{
-    categories: string[],
+    categoryIds: (number | null)[],
     minPrice: number,
     maxPrice: number,
     vegeterian: boolean,
@@ -22,60 +21,59 @@ export class FilterComponent implements OnInit {
     spiciness: number
   }>();
 
-  selectedCategories: { [key: string]: boolean } = {
-    'Salads': true,
-    'Soups': true,
-    'Chicken-Dishes': true,
-    'Fish': true,
-    'Beef-Dishes': true,
-  };
+  categories = [
+    { name: "All", id: null },
+    { name: "Salads", id: 1 },
+    { name: "Soups", id: 2 },
+    { name: "Chicken-Dishes", id: 3 },
+    { name: "Beef-Dishes", id: 4 },
+    { name: "Seafood-Dishes", id: 5 },
+    { name: "Vegetable-Dishes", id: 6 },
+    { name: "Bits&Bites", id: 7 },
+    { name: "On-The-Side", id: 8 }
+  ];
+
+  selectedCategoryIds: Set<number | null> = new Set(this.categories.map(cat => cat.id));
 
   minPrice: number = 0;
   maxPrice: number = 1000;
-
   vegeterian: boolean = false;
   nuts: boolean = false;
-  spiciness: number = 0; // 0 - არა ცხარე, 5 - ძალიან ცხარე
+  spiciness: number = 0;
 
-  constructor(private http: HttpClient) {}
+  toggleCategory(id: number | null) {
+    if (this.selectedCategoryIds.has(id)) {
+      this.selectedCategoryIds.delete(id);
+    } else {
+      this.selectedCategoryIds.add(id);
+    }
 
-  ngOnInit() {
-    this.fetchCategories();
+    if (id === null) {
+      this.selectedCategoryIds = new Set(this.categories.map(cat => cat.id));
+    } else {
+      this.selectedCategoryIds.delete(null);
+    }
+
+    this.loadProducts();
   }
 
-  fetchCategories() {
-    const url = 'https://restaurant.stepprojects.ge/api/Products/GetFiltered';
-
-    this.http.get<any>(url).subscribe({
-      next: (data) => {
-        console.log('მიღებული მონაცემები:', data);
-
-        // თუ categories მოდის API-დან, გამოიყენე ეს ნაწილი
-        if (data.categories && Array.isArray(data.categories)) {
-          this.selectedCategories = {};
-          data.categories.forEach((cat: string) => {
-            this.selectedCategories[cat] = true;
-          });
-
-          this.loadProducts();
-        }
-      },
-      error: (err) => {
-        console.error('კატეგორიების ჩატვირთვა ვერ მოხერხდა:', err);
-      }
-    });
+  isSelected(id: number | null): boolean {
+    return this.selectedCategoryIds.has(id);
   }
 
   loadProducts() {
-    const activeCategories = Object.keys(this.selectedCategories).filter(cat => this.selectedCategories[cat]);
-
     this.filterChange.emit({
-      categories: activeCategories,
+      categoryIds: Array.from(this.selectedCategoryIds),
       minPrice: this.minPrice,
       maxPrice: this.maxPrice,
       vegeterian: this.vegeterian,
       nuts: this.nuts,
       spiciness: this.spiciness
     });
+  }
+
+  // ✅ ეს მეთოდი ამშვიდებს Angular-ს, როცაテンპლატში წერ (change)="onFilterChanged()"
+  onFilterChanged(): void {
+    this.loadProducts();
   }
 }

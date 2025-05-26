@@ -1,19 +1,16 @@
 <div class="filters-container">
   <div class="filter-group">
     <h3>კატეგორია</h3>
-    <div *ngIf="Object.keys(selectedCategories).length > 0; else loading">
-      <label *ngFor="let category of Object.keys(selectedCategories)">
+    <div *ngFor="let category of categories">
+      <label>
         <input
           type="checkbox"
-          [(ngModel)]="selectedCategories[category]"
-          (change)="loadProducts()"
+          [checked]="selectedCategoryIds.has(category.id)"
+          (change)="toggleCategory(category.id)"
         />
-        {{ category }}
+        {{ category.name }}
       </label>
     </div>
-    <ng-template #loading>
-      <p>კატეგორიების ჩატვირთვა...</p>
-    </ng-template>
   </div>
 
   <div class="filter-group">
@@ -44,7 +41,7 @@
     <h3>დამატებითი ფილტრები</h3>
     <label>
       <input type="checkbox" [(ngModel)]="vegeterian" (change)="loadProducts()" />
-      ვეგეტერიანული
+      ვეგეტარიანული
     </label>
     <label>
       <input type="checkbox" [(ngModel)]="nuts" (change)="loadProducts()" />
