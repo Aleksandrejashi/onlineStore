@@ -24,20 +24,28 @@ export class HomeComponent implements OnInit {
 
   isAddingMap: { [productId: number]: boolean } = {};
 
-  private readonly apiUrl = 'https://restaurant.stepprojects.ge/api/Products/GetFiltered';
+  private readonly getAllUrl = 'https://restaurant.stepprojects.ge/api/Products/GetAll';
+  private readonly getFilteredUrl = 'https://restaurant.stepprojects.ge/api/Products/GetFiltered';
   private readonly postUrl = 'https://restaurant.stepprojects.ge/api/Baskets/AddToBasket';
   private readonly deleteUrl = 'https://restaurant.stepprojects.ge/api/Baskets/DeleteProduct';
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.loadProductsWithAdditionalFilters({
-      categoryIds: [],
-      minPrice: this.minPrice,
-      maxPrice: this.maxPrice,
-      vegeterian: false,
-      nuts: false,
-      spiciness: 0
+    // პირველ ჩატვირთვაზე ყველა პროდუქტი ვიტვირთოთ
+    this.loadAllProducts();
+  }
+
+  loadAllProducts(): void {
+    this.http.get<any[]>(this.getAllUrl).subscribe({
+      next: data => {
+        this.products = data;
+        this.filteredProducts = data;
+      },
+      error: error => {
+        console.error('ყველა პროდუქტის ჩატვირთვის შეცდომა:', error);
+        this.errorMessage = 'პროდუქტების ჩატვირთვა ვერ მოხერხდა.';
+      }
     });
   }
 
@@ -86,7 +94,7 @@ export class HomeComponent implements OnInit {
       params = params.set('spicyLevel', filters.spiciness.toString());
     }
 
-    this.http.get<any[]>(this.apiUrl, { params }).subscribe({
+    this.http.get<any[]>(this.getFilteredUrl, { params }).subscribe({
       next: data => {
         this.products = data;
 

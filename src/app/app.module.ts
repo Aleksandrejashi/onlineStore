@@ -12,9 +12,11 @@ import { RegistrationComponent } from './registration/registration.component';
 import { FilterComponent } from './filter/filter.component';
 import { CartComponent } from './pages/cart/cart.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
+   
     // სხვა კომპონენტები standalone-ია, ამიტომ აქ არ წერენ
   ],
   imports: [

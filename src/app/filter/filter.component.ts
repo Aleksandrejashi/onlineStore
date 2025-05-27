@@ -72,7 +72,7 @@ export class FilterComponent {
     });
   }
 
-  // ✅ ეს მეთოდი ამშვიდებს Angular-ს, როცაテンპლატში წერ (change)="onFilterChanged()"
+  
   onFilterChanged(): void {
     this.loadProducts();
   }
